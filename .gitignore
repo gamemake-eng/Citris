@@ -1,8 +1,8 @@
 *.wasm
 *.zip
 *.out
-.o
-.d
+*.o
+*.d
 
 # Added by cargo
 
