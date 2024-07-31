@@ -3,7 +3,7 @@ use minifb::{Key, Window, WindowOptions};
 
 mod gpu;
 
-use gpu::Gpu;
+use gpu::{Gpu, GPU_REG};
 
 fn main() -> anyhow::Result<()> {
 	
@@ -38,6 +38,11 @@ fn main() -> anyhow::Result<()> {
 	while window.is_open() && !window.is_key_down(Key::Escape) {
 	    gpu.regs[6] = 0xff00fff0u32 as i32;
             gpu.clear();
+            gpu.regs[GPU_REG::W as usize] = 16;
+            gpu.regs[GPU_REG::H as usize] = 16;
+            gpu.regs[GPU_REG::DX as usize] = 10;
+            gpu.regs[GPU_REG::DY as usize] = 10;
+            gpu.blit();
 	    gpu.flip();
 	    window.update_with_buffer(&gpu.frontbuf, 320, 240)?;
     	}
