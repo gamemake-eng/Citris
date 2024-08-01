@@ -26,7 +26,8 @@
 //gpu_load_framebuf(uint32_t addr, uint16_t color)
 //gpu_read_framebuf(uint32_t addr)
 //gpu_run_shader(uint32_t cacheid, uint32_2 target)
-//gpu_command(uint32_t cmd)
+WASM_IMPORT("gpu_cmd")
+void gpu_command(uint32_t cmd);
 
 //Shader Core interface
 

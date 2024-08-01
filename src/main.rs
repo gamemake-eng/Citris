@@ -20,6 +20,10 @@ fn main() -> anyhow::Result<()> {
     let engine = Engine::default();
     let mut linker = Linker::new(&engine);
     wasi_common::sync::add_to_linker(&mut linker, |s| s)?;
+    linker.func_wrap("env", "gpu_cmd", |cmd: u32| {
+        println!("cmd {}", cmd);
+        //gpu.cmd(cmd);
+    })?;
 
     let wasi = WasiCtxBuilder::new()
         .inherit_stdio()

@@ -5,16 +5,6 @@ pub struct Gpu {
     pub regs: Vec<i32>
 }
 
-/*
- * regs
-#define DX 0
-#define DY 1
-#define SX 2
-#define SY 3
-#define W 4
-#define H 5
-#define CC 6
-*/
 
 pub mod gpu_reg {
     pub const DX: usize  = 0;
@@ -24,6 +14,15 @@ pub mod gpu_reg {
     pub const W: usize   = 4;
     pub const H: usize   = 5;
     pub const CC: usize  = 6;
+}
+
+pub mod gpu_cmd {
+    //Clear
+    pub const CLS: u32 = 0;
+    //Blit
+    pub const BLT: u32 = 1;
+    //Flip
+    pub const FLP: u32 = 2;
 }
 
 impl Gpu {
@@ -89,7 +88,7 @@ impl Gpu {
             let dy = desty+(i/height);
             
 
-            //checks if pixel is outside screen
+            //checks if pixel is inside screen
             let cangox = (dx >= 0) && (dx <= 320);
             let cangoy = (dy >= 0) && (dy <= 320);
             
@@ -97,7 +96,7 @@ impl Gpu {
             if cangox && cangoy {
                  //calculating alpha
                  
-                 //Getting rgb of texture
+                 //Getting rgb from texture
                  let sr = (*pixel & 0x00ff0000)>>16;
                  let sg = (*pixel & 0x0000ff00)>>8;
                  let sb = *pixel & 0x000000ff;
@@ -127,22 +126,23 @@ impl Gpu {
 
     }
     pub fn clear(&mut self){
-        //println!("Not implmented");
         for pixel in self.backbuf.iter_mut() {
             *pixel = self.regs[gpu_reg::CC] as u32;
         }
     }
     pub fn flip(&mut self){
         for (index, pixel) in self.backbuf.iter_mut().enumerate(){
-            //println!("index {index} pixel {pixel}");
             self.frontbuf[index] = *pixel;
         }
 
-        /*for (index, pixel) in self.frontbuf.iter_mut().enumerate(){     
-            println!("index {index} pixel {pixel}");
-        }*/ 
+    }
 
-
-
+    pub fn cmd(&mut self, cmd: u32){
+        match cmd {
+            gpu_cmd::CLS => self.clear(),
+            gpu_cmd::BLT => self.blit(),
+            gpu_cmd::FLP => self.flip(),
+            _=>println!("Invalid gpu command {}", cmd)
+        }
     }
 }
