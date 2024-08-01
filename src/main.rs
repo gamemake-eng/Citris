@@ -25,7 +25,7 @@ fn main() -> anyhow::Result<()> {
 	let instance = Instance::new(&mut store, &module, &import_object)?;
 	
         
-
+        let mut x = -5;
 
 	let mut window = Window::new(
 	    "Test",
@@ -38,12 +38,15 @@ fn main() -> anyhow::Result<()> {
 	while window.is_open() && !window.is_key_down(Key::Escape) {
 	    gpu.regs[6] = 0xff00fff0u32 as i32;
             gpu.clear();
-            gpu.regs[GPU_REG::W as usize] = 16;
-            gpu.regs[GPU_REG::H as usize] = 16;
-            gpu.regs[GPU_REG::DX as usize] = 10;
-            gpu.regs[GPU_REG::DY as usize] = 10;
+            gpu.regs[GPU_REG::W] = 16;
+            gpu.regs[GPU_REG::H] = 16;
+            gpu.regs[GPU_REG::DX] = x as i32;
+            gpu.regs[GPU_REG::DY] = 10;
             gpu.blit();
 	    gpu.flip();
+            
+            x+=1;
+
 	    window.update_with_buffer(&gpu.frontbuf, 320, 240)?;
     	}
 

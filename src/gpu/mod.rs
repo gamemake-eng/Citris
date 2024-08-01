@@ -16,14 +16,14 @@ pub struct Gpu {
 #define CC 6
 */
 
-pub enum GPU_REG {
-    DX = 0,
-    DY = 1,
-    SX = 2,
-    SY = 3,
-    W  = 4,
-    H  = 5,
-    CC = 6
+pub mod GPU_REG {
+    pub const DX: usize  = 0;
+    pub const DY: usize  = 1;
+    pub const SX: usize  = 2;
+    pub const SY: usize  = 3;
+    pub const W: usize   = 4;
+    pub const H: usize   = 5;
+    pub const CC: usize  = 6;
 }
 
 impl Gpu {
@@ -40,14 +40,14 @@ impl Gpu {
         self.backbuf[(x + 320 * y) as usize] = col;
     }
     pub fn blit(&mut self){
-        let width = self.regs[GPU_REG::W as usize];
-        let height = self.regs[GPU_REG::H as usize];
+        let width = self.regs[GPU_REG::W];
+        let height = self.regs[GPU_REG::H];
         
-        let destx = self.regs[GPU_REG::DX as usize];
-        let desty = self.regs[GPU_REG::DY as usize];
+        let destx = self.regs[GPU_REG::DX];
+        let desty = self.regs[GPU_REG::DY];
         
-        let srcx = self.regs[GPU_REG::SX as usize];
-        let srcy = self.regs[GPU_REG::SY as usize];
+        let srcx = self.regs[GPU_REG::SX];
+        let srcy = self.regs[GPU_REG::SY];
 
         let mut buf = vec![0u32; (width*height) as usize];
         
@@ -64,14 +64,22 @@ impl Gpu {
         //Then, blit to the back buffer
         for (index, pixel) in buf.iter_mut().enumerate() {
             let i = index as i32;
-            self.pixel(destx+(i%width), desty+(i/height), *pixel);
+            let dx = destx+(i%width);
+            let dy = desty+(i/height);
+            
+            let cangox = (dx >= 0) && (dx <= 320);
+            let cangoy = (dy >= 0) && (dy <= 320);
+            
+            if cangox && cangoy {
+                self.pixel(dx, dy, *pixel);
+            }
         }
 
     }
     pub fn clear(&mut self){
         //println!("Not implmented");
         for pixel in self.backbuf.iter_mut() {
-            *pixel = self.regs[GPU_REG::CC as usize] as u32;
+            *pixel = self.regs[GPU_REG::CC] as u32;
         }
     }
     pub fn flip(&mut self){
