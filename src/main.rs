@@ -38,11 +38,18 @@ fn main() -> anyhow::Result<()> {
 	while window.is_open() && !window.is_key_down(Key::Escape) {
 	    gpu.regs[6] = 0xff00fff0u32 as i32;
             gpu.clear();
-            gpu.regs[gpu_reg::W] = 16;
-            gpu.regs[gpu_reg::H] = 16;
-            gpu.regs[gpu_reg::DX] = x as i32;
+            gpu.regs[gpu_reg::W] = 32;
+            gpu.regs[gpu_reg::H] = 32;
+            gpu.regs[gpu_reg::DX] = 10;
             gpu.regs[gpu_reg::DY] = 10;
             gpu.blit();
+            
+            gpu.regs[gpu_reg::W] = 32;
+            gpu.regs[gpu_reg::H] = 32;
+            gpu.regs[gpu_reg::DX] = 25;
+            gpu.regs[gpu_reg::DY] = 25;
+            gpu.blit();
+
 	    gpu.flip();
             
             x+=1;

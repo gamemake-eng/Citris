@@ -31,7 +31,7 @@ impl Gpu {
         Gpu{
             frontbuf: vec![0u32; 320*240],
             backbuf: vec![0u32; 320*240],
-            texbuf: vec![0u32; 1024*1024],
+            texbuf: vec![0x50ff0000u32; 1024*1024],
             regs: vec![0i32; 7]
 
         }
@@ -39,6 +39,27 @@ impl Gpu {
     pub fn pixel(&mut self, x: i32, y: i32, col: u32){
         self.backbuf[(x + 320 * y) as usize] = col;
     }
+    pub fn get_pixel(&mut self, x: i32, y: i32) -> u32 {
+        let cangox = (x >= 0) && (x <= 320);
+        let cangoy = (y >= 0) && (y <= 320);
+        let mut col = 0;
+
+        if cangox && cangoy {
+            col = self.backbuf[(x + 320 * y) as usize];
+        }
+
+        col
+    }
+
+    pub fn calc_alpha(
+        &mut self, 
+        a: u32,
+        v1: u32, v2: u32
+    ) -> u32{
+        let fin = ((255-a)*v1+a*v2)/255;
+        fin
+    }
+
     pub fn blit(&mut self){
         let width = self.regs[gpu_reg::W];
         let height = self.regs[gpu_reg::H];
@@ -67,11 +88,40 @@ impl Gpu {
             let dx = destx+(i%width);
             let dy = desty+(i/height);
             
+
+            //checks if pixel is outside screen
             let cangox = (dx >= 0) && (dx <= 320);
             let cangoy = (dy >= 0) && (dy <= 320);
             
+            //Only draw pixel if it's visible
             if cangox && cangoy {
-                self.pixel(dx, dy, *pixel);
+                 //calculating alpha
+                 
+                 //Getting rgb of texture
+                 let sr = (*pixel & 0x00ff0000)>>16;
+                 let sg = (*pixel & 0x0000ff00)>>8;
+                 let sb = *pixel & 0x000000ff;
+                 let sa = *pixel>>24;
+                 
+                 //getting rgb from framebuffer
+                 let dpix = self.get_pixel(dx,dy);
+                
+                 let dr = (dpix & 0x00ff0000)>>16;
+                 let dg = (dpix & 0x0000ff00)>>8;
+                 let db = dpix & 0x000000ff;
+                 let da = dpix>>24;
+                 
+                 //Get the alpha
+                 let fr = self.calc_alpha(sa, sr, dr);
+                 let fg = self.calc_alpha(sa, sg, dg);
+                 let fb = self.calc_alpha(sa, sb, db);
+                 
+                 //Combine into DWORD
+                 let fp: u32 = (0xff << 24 | fr << 16 | fg << 8 | fb);
+
+
+        
+                 self.pixel(dx, dy, fp);
             }
         }
 
