@@ -16,7 +16,7 @@ pub struct Gpu {
 #define CC 6
 */
 
-pub mod GPU_REG {
+pub mod gpu_reg {
     pub const DX: usize  = 0;
     pub const DY: usize  = 1;
     pub const SX: usize  = 2;
@@ -40,14 +40,14 @@ impl Gpu {
         self.backbuf[(x + 320 * y) as usize] = col;
     }
     pub fn blit(&mut self){
-        let width = self.regs[GPU_REG::W];
-        let height = self.regs[GPU_REG::H];
+        let width = self.regs[gpu_reg::W];
+        let height = self.regs[gpu_reg::H];
         
-        let destx = self.regs[GPU_REG::DX];
-        let desty = self.regs[GPU_REG::DY];
+        let destx = self.regs[gpu_reg::DX];
+        let desty = self.regs[gpu_reg::DY];
         
-        let srcx = self.regs[GPU_REG::SX];
-        let srcy = self.regs[GPU_REG::SY];
+        let srcx = self.regs[gpu_reg::SX];
+        let srcy = self.regs[gpu_reg::SY];
 
         let mut buf = vec![0u32; (width*height) as usize];
         
@@ -79,7 +79,7 @@ impl Gpu {
     pub fn clear(&mut self){
         //println!("Not implmented");
         for pixel in self.backbuf.iter_mut() {
-            *pixel = self.regs[GPU_REG::CC] as u32;
+            *pixel = self.regs[gpu_reg::CC] as u32;
         }
     }
     pub fn flip(&mut self){
