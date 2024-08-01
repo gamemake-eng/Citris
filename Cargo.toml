@@ -6,4 +6,6 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.86"
 minifb = "0.27.0"
-wasmer = "4.3.5"
+wasi-common = "23.0.1"
+wasmtime = "23.0.1"
+#wasmer-wasix = "0.24.0"

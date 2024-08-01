@@ -109,7 +109,7 @@ impl Gpu {
                  let dr = (dpix & 0x00ff0000)>>16;
                  let dg = (dpix & 0x0000ff00)>>8;
                  let db = dpix & 0x000000ff;
-                 let da = dpix>>24;
+                 let _da = dpix>>24;
                  
                  //Get the alpha
                  let fr = self.calc_alpha(sa, sr, dr);
@@ -117,7 +117,7 @@ impl Gpu {
                  let fb = self.calc_alpha(sa, sb, db);
                  
                  //Combine into DWORD
-                 let fp: u32 = (0xff << 24 | fr << 16 | fg << 8 | fb);
+                 let fp: u32 = 0xff << 24 | fr << 16 | fg << 8 | fb;
 
 
         
