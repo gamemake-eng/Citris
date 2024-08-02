@@ -1,4 +1,4 @@
-#   Citris
+#   Citris (Scrapped)
 
 <p align="center">
   <img src="img/Console.png" alt="Sit tr ess console"/>

@@ -145,4 +145,12 @@ impl Gpu {
             _=>println!("Invalid gpu command {}", cmd)
         }
     }
+
+    pub fn write_buf(&mut self, buf: u32, addr: u32, val: u32){
+        match buf {
+            0 => self.texbuf[addr as usize] = val,
+            1 => self.backbuf[addr as usize] = val,
+            _=>println!("Invalid buffer")
+        }
+    }
 }
